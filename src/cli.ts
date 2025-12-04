@@ -17,17 +17,17 @@ program
 
 program
   .command("load-projects")
-  .description("Fetch and list Bugtracker projects")
+  .description("Fetch and cache Bugtracker projects")
   .action(projectsCommand);
 
 program
   .command("setup")
-  .description("Setup Bugtracker API key")
+  .description("Configure Bugtracker API key")
   .action(setConfigCommand);
 
 program
   .command("clear-config")
-  .description("Clear Bugtracker API key and configuration")
+  .description("Clear all saved configuration")
   .action(clearConfig);
 
 program.parse();

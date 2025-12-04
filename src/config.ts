@@ -1,59 +1,71 @@
 import inquirer from "inquirer";
 import fs from "fs-extra";
-import path from "path";
-import type { Config } from "./type.js";
+import { CONFIG_DIR, CONFIG_FILE_PATH } from "./constants.js";
+import { validateApiKey } from "./utils/validators.js";
+import { logSuccess } from "./utils/logger.js";
+import type { Config } from "./types.js";
 
-export const baseUrl = "https://bugtracker.i3international.com";
-
-const configPath = path.join(
-  process.env.HOME || "",
-  ".bugtracker",
-  "config.json"
-);
-
+/**
+ * Loads the configuration from disk
+ */
 export async function loadConfig(): Promise<Config | null> {
-  if (fs.existsSync(configPath)) return fs.readJson(configPath);
+  if (fs.existsSync(CONFIG_FILE_PATH)) {
+    return fs.readJson(CONFIG_FILE_PATH);
+  }
   return null;
 }
 
-export async function saveApiToken(apiKey: string) {
-  await fs.ensureDir(path.dirname(configPath));
-  await fs.writeJson(configPath, { apiKey });
+/**
+ * Saves the API token to the configuration file
+ */
+export async function saveApiToken(apiKey: string): Promise<void> {
+  await fs.ensureDir(CONFIG_DIR);
+  await fs.writeJson(CONFIG_FILE_PATH, { apiKey });
 }
 
-export async function updateConfig(fields: any) {
+/**
+ * Updates the configuration with new fields
+ */
+export async function updateConfig(fields: Partial<Config>): Promise<void> {
   const config = (await loadConfig()) || {};
   const updatedConfig = { ...config, ...fields };
-  await fs.ensureDir(path.dirname(configPath));
-  await fs.writeJson(configPath, updatedConfig);
+  await fs.ensureDir(CONFIG_DIR);
+  await fs.writeJson(CONFIG_FILE_PATH, updatedConfig);
 }
 
-export async function setupApiConfig() {
+/**
+ * Prompts user for API key and saves it
+ */
+export async function setupApiConfig(): Promise<Config> {
   const setup = await inquirer.prompt([
     {
       type: "password",
       name: "apiKey",
       message: "Bugtracker API key:",
       placeholder: "Enter your Bugtracker API key",
-      validate: (input) => {
-        if (!input || input.trim() === "") {
-          return "API key is required";
-        }
-        return true;
-      },
-    },
+      validate: validateApiKey
+    }
   ]);
+
   await saveApiToken(setup.apiKey);
+  logSuccess("API key saved successfully");
 
   return setup;
 }
 
-export async function clearConfig() {
-  if (fs.existsSync(configPath)) {
-    await fs.remove(configPath);
+/**
+ * Clears the configuration file
+ */
+export async function clearConfig(): Promise<void> {
+  if (fs.existsSync(CONFIG_FILE_PATH)) {
+    await fs.remove(CONFIG_FILE_PATH);
+    logSuccess("Configuration cleared successfully");
   }
 }
 
-export default async function setConfigCommand() {
+/**
+ * Command handler for setup command
+ */
+export default async function setConfigCommand(): Promise<void> {
   await setupApiConfig();
 }

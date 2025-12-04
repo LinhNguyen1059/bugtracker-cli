@@ -1,0 +1,16 @@
+# Don't include source files in npm package
+src/
+tsconfig.json
+
+# Don't include documentation that's not needed
+REFACTORING.md
+ARCHITECTURE.md
+
+# Don't include git files
+.git/
+.gitignore
+
+# Don't include development files
+node_modules/
+.DS_Store
+*.log

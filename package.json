@@ -1,16 +1,40 @@
 {
   "name": "bugtracker-cli",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A command-line tool for automating Bugtracker (Redmine) issue management",
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "bugtracker",
+    "redmine",
+    "cli",
+    "issue-tracker",
+    "automation",
+    "project-management"
+  ],
+  "author": "LinhNguyen1059",
   "license": "ISC",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LinhNguyen1059/bugtracker-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LinhNguyen1059/bugtracker-cli/issues"
+  },
+  "homepage": "https://github.com/LinhNguyen1059/bugtracker-cli#readme",
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "axios": "^1.13.2",
     "commander": "^14.0.2",
